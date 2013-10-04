@@ -1,0 +1,66 @@
+/*
+ * Copyright year Ronald D. Kurr kurr@kurron.org
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
+
+apply plugin: 'groovy'
+apply plugin: 'project-report'
+apply plugin: 'war'
+
+ext {
+    groovyVersion = '2.1.7'
+    hamcrestVersion = '1.3'
+    junitVersion = '4.11'
+    logbackVersion = '1.0.13'
+    slf4jVersion = '1.7.5'
+    spockVersion = '0.7-groovy-2.0'
+}
+
+defaultTasks 'clean', 'projectReport', 'build'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://repo.springsource.org/libs-release"
+    }
+    maven {
+        url "http://repo.springsource.org/libs-milestone"
+    }
+    maven {
+        url "http://repo.springsource.org/libs-snapshot"
+    }
+}
+
+configurations.all {
+    exclude group: 'commons-logging'
+    exclude group: 'log4j'
+    exclude module: 'junit-dep'
+    exclude module: 'hamcrest-core'
+}
+
+dependencies {
+    compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    compile "org.slf4j:slf4j-api:${slf4jVersion}"
+    compile "org.slf4j:slf4j-ext:${slf4jVersion}"
+    compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
+    compile "ch.qos.logback:logback-core:${logbackVersion}"
+    compile "ch.qos.logback:logback-classic:${logbackVersion}"
+
+    runtime "org.slf4j:jul-to-slf4j:${slf4jVersion}"
+    runtime "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
+
+    testCompile "junit:junit-dep:${junitVersion}"
+    testCompile "org.hamcrest:hamcrest-all:${hamcrestVersion}"
+    testCompile "org.spockframework:spock-core:${spockVersion}"
+}
