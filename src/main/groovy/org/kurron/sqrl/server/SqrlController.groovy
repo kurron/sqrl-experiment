@@ -18,10 +18,6 @@ import org.springframework.web.util.UriComponentsBuilder
 @Controller
 class SqrlController {
 
-    // instead of hashing against the domain name, we'll hash against the realm which should remain constant over time
-    // or the association between client and server will be broken.
-    static final String REALM = UUID.randomUUID().toString()
-
     @RequestMapping( value = '/sqrl', method = RequestMethod.GET )
     ResponseEntity<String>  bob( @RequestHeader( value = 'Authorization', required = false ) String authenticationString ) {
         log.info( 'Authorization header = {}', authenticationString )
@@ -31,7 +27,7 @@ class SqrlController {
         }
         else {
             log.info( 'Authorization was not sent.  Issuing challenge.' )
-            headers.add( 'WWW-Authenticate', "Basic realm=${REALM}" )
+            headers.add( 'X-SQRL-CHALLENGE', UUID.randomUUID().toString() )
             status = HttpStatus.UNAUTHORIZED
         }
         ResponseEntity<String> response = new ResponseEntity<>( 'body', headers, status )
