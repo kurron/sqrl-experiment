@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="slf4j-ext-1.7.5">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-26/filestore/org.slf4j/slf4j-ext/1.7.5/jar/52b82b4ef19fbd6ef36e2142efc6760ae2eba2b8/slf4j-ext-1.7.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/artifacts-26/filestore/org.slf4j/slf4j-ext/1.7.5/source/da35c55c81dcb58db9f4130aa88270f4d3713813/slf4j-ext-1.7.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

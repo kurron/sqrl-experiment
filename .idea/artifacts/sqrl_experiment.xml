@@ -1,0 +1,32 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" build-on-make="true" name="sqrl-experiment">
+    <output-path>$PROJECT_DIR$/out/artifacts/sqrl_experiment</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="sqrl-experiment/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="sqrl-experiment" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="log4j-over-slf4j-1.7.5" />
+          <element id="library" level="project" name="slf4j-ext-1.7.5" />
+          <element id="library" level="project" name="spring-core-3.2.4.RELEASE" />
+          <element id="library" level="project" name="spring-aop-3.2.4.RELEASE" />
+          <element id="library" level="project" name="spring-expression-3.2.4.RELEASE" />
+          <element id="library" level="project" name="logback-classic-1.0.13" />
+          <element id="library" level="project" name="cal10n-api-0.7.4" />
+          <element id="library" level="project" name="slf4j-api-1.7.5" />
+          <element id="library" level="project" name="spring-webmvc-3.2.4.RELEASE" />
+          <element id="library" level="project" name="jcl-over-slf4j-1.7.5" />
+          <element id="library" level="project" name="spring-context-3.2.4.RELEASE" />
+          <element id="library" level="project" name="spring-beans-3.2.4.RELEASE" />
+          <element id="library" level="project" name="spring-web-3.2.4.RELEASE" />
+          <element id="library" level="project" name="groovy-all-2.1.7" />
+          <element id="library" level="project" name="logback-core-1.0.13" />
+          <element id="library" level="project" name="jul-to-slf4j-1.7.5" />
+          <element id="library" level="project" name="aopalliance-1.0" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
