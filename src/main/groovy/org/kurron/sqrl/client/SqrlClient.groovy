@@ -14,6 +14,7 @@ import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.MessageDigest
 import java.security.SecureRandom
+import java.security.Signature
 
 /**
  * An example of the SQRL protocol as seen from the client side.
@@ -38,17 +39,18 @@ class SqrlClient  implements ResponseErrorHandler {
             hmac.init( new SecretKeySpec( secretBytes, 'AES' ) )
             byte[] digest = hmac.doFinal( 'localhost'.bytes )
 
-            // generate a new key pair
-            KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance('DiffieHellman')
+            // generate a new key pair using the RSA algorithm
+            KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance('RSA')
             KeyPair pair = keyGenerator.generateKeyPair()
 
             // store the private key and index it by the HMAC of the domain
             map[digest] = pair.private
 
             // digest the challenge
-            MessageDigest digester = MessageDigest.getInstance('SHA-256')
-            byte[] challengeDigest = digester.digest(challenge.bytes)
-
+            Signature signer = Signature.getInstance( 'SHA256withRSA' )
+            signer.initSign( pair.private, generator )
+            signer.update( challenge.bytes )
+            byte[] signature = signer.sign()
 
             println()
         }
