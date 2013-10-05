@@ -10,6 +10,8 @@ import org.springframework.web.client.RestTemplate
 
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
+import java.security.KeyPair
+import java.security.KeyPairGenerator
 import java.security.SecureRandom
 
 /**
@@ -20,6 +22,7 @@ class SqrlClient  implements ResponseErrorHandler {
     private static final SecureRandom generator = new SecureRandom()
 
     public static void main(String[] args) {
+        def map = [:]
         RestTemplate template = new RestTemplate()
         template.errorHandler = new SqrlClient()
         ResponseEntity<String> entity = template.getForEntity(new URI('http://localhost:8080/sqrl'), String)
@@ -32,10 +35,13 @@ class SqrlClient  implements ResponseErrorHandler {
             byte[] secretBytes = new byte[256]
             generator.nextBytes( secretBytes )
             hmac.init( new SecretKeySpec( secretBytes, 'AES' ) )
-            hmac.update( 'localhost'.bytes )
-            hmac.update( '?'.bytes )
-            hmac.update( challenge.bytes )
-            byte[] digest = hmac.doFinal()
+            byte[] digest = hmac.doFinal( 'localhost'.bytes )
+
+            KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance('DiffieHellman')
+            KeyPair pair = keyGenerator.generateKeyPair()
+            map[digest] = pair.private
+
+            println()
         }
     }
 
