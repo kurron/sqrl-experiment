@@ -12,6 +12,7 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import java.security.KeyPair
 import java.security.KeyPairGenerator
+import java.security.MessageDigest
 import java.security.SecureRandom
 
 /**
@@ -30,16 +31,24 @@ class SqrlClient  implements ResponseErrorHandler {
             String challenge = entity.headers.getFirst('X-SQRL-CHALLENGE')
             log.info( 'Challenge {} received.', challenge )
 
-
+            // create an HMAC of the domain
             Mac hmac = Mac.getInstance('HmacSHA256')
             byte[] secretBytes = new byte[256]
             generator.nextBytes( secretBytes )
             hmac.init( new SecretKeySpec( secretBytes, 'AES' ) )
             byte[] digest = hmac.doFinal( 'localhost'.bytes )
 
+            // generate a new key pair
             KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance('DiffieHellman')
             KeyPair pair = keyGenerator.generateKeyPair()
+
+            // store the private key and index it by the HMAC of the domain
             map[digest] = pair.private
+
+            // digest the challenge
+            MessageDigest digester = MessageDigest.getInstance('SHA-256')
+            byte[] challengeDigest = digester.digest(challenge.bytes)
+
 
             println()
         }
