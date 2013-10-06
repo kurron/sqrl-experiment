@@ -80,7 +80,7 @@ give you some additional information to hand over to the new endpoint."
                            nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093"
                            original-location="/index.html"
 
-<strong>clien:t</strong> "Thanks.  I'll prepare a public-private key pair for the 'sqrl.somesite.com' realm and sign the provided
+<strong>client:</strong> "Thanks.  I'll prepare a public-private key pair for the 'sqrl.somesite.com' realm and sign the provided
 nonsense with the private key.  I'll request that my identity be the HMAC of the nonce and I'll upload the public
 key to the endpoint. I'll also provde the original endpoint that I was trying to get to."
 
