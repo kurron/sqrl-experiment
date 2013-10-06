@@ -81,7 +81,7 @@ give you some additional information to hand over to the new endpoint."
                            original-location="/index.html"
 
 [client] "Thanks.  I'll prepare a public-private key pair for the 'sqrl.somesite.com' realm and sign the provided
-nonsense with the private key.  I'll request that my identity be the hash of the public key and I'll upload the public
+nonsense with the private key.  I'll request that my identity be the HMAC of the nonce and I'll upload the public
 key to the endpoint. I'll also provde the original endpoint that I was trying to get to."
 
     POST /new-identity/ HTTP/1.1
@@ -118,3 +118,7 @@ providing your identifier for all requests to this site."
 As you can see, I've decided to base the key pair on the provided realm instead of the domain name like Steve does.  The 
 thinking there is that this allows endpoints to change slightly over time and keep the identity intact. As long as
 the realm remains constant, you could move the entire site to another domain and things should still work.
+
+Another deviation is in the use of the HMAC.  Steve appears to want to use the HMAC as a source of randomness when 
+generating the key pair.  I haven't been able to figure out how to do that with the Java APIs so my compromise is
+to use the HMAC as the identifier instead of the public key.
