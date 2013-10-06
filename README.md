@@ -113,3 +113,8 @@ providing your identifier for all requests to this site."
     Content-Type: text/html
     Content-Length: 1024
 
+----
+
+As you can see, I've decided to base the key pair on the provided realm instead of the domain name like Steve does.  The 
+thinking there is that this allows endpoints to change slightly over time and keep the identity intact. As long as
+the realm remains constant, you could move the entire site to another domain and things should still work.
