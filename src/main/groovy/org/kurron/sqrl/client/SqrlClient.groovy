@@ -14,9 +14,7 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import java.security.KeyPair
 import java.security.KeyPairGenerator
-import java.security.Provider
 import java.security.SecureRandom
-import java.security.Security
 import java.security.Signature
 
 /**
@@ -27,23 +25,49 @@ class SqrlClient  implements ResponseErrorHandler {
     private static final SecureRandom generator = new SecureRandom()
 
     public static void main(String[] args) {
-        def map = [:]
+        def hmacToPrivateKeyMap = [:]
         RestTemplate template = new RestTemplate()
         template.errorHandler = new SqrlClient()
-        ResponseEntity<String> entity = template.getForEntity(new URI('http://localhost:8080/sqrl'), String)
+        String domain = 'localhost'
+        URI endpoint = new URI( 'http', null, domain, 8080, '/index.html', null, null )
+        ResponseEntity<String> entity = template.getForEntity(endpoint, String)
 
         if ( entity.statusCode == HttpStatus.UNAUTHORIZED ) {
-            String challenge = entity.headers.getFirst('X-SQRL-CHALLENGE')
+            String challenge = entity.headers.getFirst('WWW-Authenticate')
             log.info( 'Challenge {} received.', challenge )
 
-            byte[] digest = generateDomainDigest('localhost')
-            KeyPair pair = generateKeyPair()
-            storePrivateKey(pair, map, digest)
-            byte[] signature = signChallenge(pair, challenge)
-            String asString = new String(signature)
-            HttpHeaders headers = new HttpHeaders()
-            headers.add( 'Authorization', 'signature:signature' )  // must be in a base64 encoded string
-            ResponseEntity<String> resource = template.exchange( new URI('http://localhost:8080/sqrl'), HttpMethod.POST, new HttpEntity<byte[]>( pair.public.encoded, headers ), String )
+            if ( challenge.contains( 'SQRL ') ) {
+                log.info( 'SQRL challenge has been issued.')
+                def challengeMap = [:]
+                challenge.minus( 'SQRL ' ).tokenize( ',' ).collect {
+                    def tokens = it.tokenize( '=' )
+                    challengeMap[tokens.first().trim()] = tokens.last().trim()
+                }
+
+                byte[] digest = createRealmHMAC( challengeMap['realm'] )
+                if ( hmacToPrivateKeyMap.containsKey( digest ) ) {
+                    log.info( 'SRL realm located.  We have an established identity with the site.')
+                }
+                else {
+                    log.info( 'SRL realm not found.  Requesting to establish an identity with the site.')
+                    HttpHeaders identityHeaders = new HttpHeaders()
+                    identityHeaders.add( 'Authorization', "SQRL realm=${challengeMap['realm']}, nonce=${challengeMap['nonce']}, establish-identity=true" )
+                    ResponseEntity<String> newIdentityResponse = template.exchange( endpoint, HttpMethod.GET, new HttpEntity<byte[]>( identityHeaders ), String )
+                    println()
+                }
+
+/*
+                KeyPair pair = generateKeyPair()
+                storePrivateKey(pair, map, digest)
+                byte[] signature = signChallenge(pair, challenge)
+
+                HttpHeaders headers = new HttpHeaders()
+                // the public key is the identity and is alway s sent -- use base64 encoding
+                //
+                headers.add( 'Authorization', 'signature:signature' )  // must be in a base64 encoded string
+                ResponseEntity<String> resource = template.exchange(endpoint, HttpMethod.POST, new HttpEntity<byte[]>( pair.public.encoded, headers ), String )
+*/
+            }
 
             println()
         }
@@ -70,15 +94,18 @@ class SqrlClient  implements ResponseErrorHandler {
         pair
     }
 
-    private static byte[] generateDomainDigest(String domain) {
-// create an HMAC of the domain
+    private static byte[] createRealmHMAC(String realm) {
         Mac hmac = Mac.getInstance('HmacSHA256')
-        hmac.init(generateSecretHmacKey())
-        byte[] digest = hmac.doFinal(domain.bytes)
+        hmac.init(loadSecretKey())
+        byte[] digest = hmac.doFinal(realm.bytes)
         digest
     }
 
-    private static SecretKeySpec generateSecretHmacKey() {
+    /**
+     * Normally the key would be loaded from a keystore but we'll make one on the fly instead.
+     * @return the client's secret key.
+     */
+    private static SecretKeySpec loadSecretKey() {
         byte[] secretBytes = new byte[256]
         generator.nextBytes(secretBytes)
         SecretKeySpec secretKey = new SecretKeySpec(secretBytes, 'AES')
