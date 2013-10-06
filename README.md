@@ -6,7 +6,7 @@ An experimental Groovy implementation of Steve Gibson's SQRL authentication prot
 Steve Gibson has proposed  [a new mechanism for web authentication](https://www.grc.com/sqrl/sqrl.htm) and this is my 
 attempt to implement a non-QR code flavor of that protocol.  I want to preserve the "no keyboard involved" aspect
 of the solution and take it closer to what is done with current HTTP authentication mechanisms.  I see two scenarios:
-a returning client that has already established an identity with a server and a client that needs to establish an 
+a returning client that has already established an identity with a server and a client that needs to establish a new 
 identity with the server.  Let's take the easy one first, established identity.
 
 [client] "Hello, I would like access to this resource."
