@@ -4,7 +4,51 @@ sqrl-experiment
 An experimental Groovy implementation of Steve Gibson's SQRL authentication protocol.
 
 Steve Gibson has proposed  [a new mechanism for web authentication](https://www.grc.com/sqrl/sqrl.htm) and this is my 
-attempt to implement a non-QR code flavor of that protocol.  The steps go something like this:
+attempt to implement a non-QR code flavor of that protocol.  I want to preserve the "no keyboard involved" aspect
+of the solution and take it closer to what is done with current HTTP authentication mechanisms.  I see two scenarios:
+a returning client that has already established and identity with a server and a client that needs to establish an 
+identity with the server.  Let's take the easy one first, established identity.
+
+[client] "Hello, I would like access to this resource."
+        
+    GET /index.html HTTP/1.1
+    Host: somesite.com
+
+[server] "I'm sorry but do we know each other?  If we do, you should be able to encrypt this bit of nonsense for me."
+
+    HTTP/1.1 401 Unauthorized
+    WWW-Authenticate: SQRL realm="sqrl.somesite.com", nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093"
+
+[client] "Here is your nonsense that I have encrypted for you and here is the identifier you should know me by."
+
+    GET /index.html HTTP/1.1
+    Host: somesite.com
+    Authorization: SQRL username="beef012395678",
+                        realm="sqrl.somesite.com",
+                        nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+                        response="6629fae49393a05397450978507c4ef1"
+
+[server] "I found your identifier in our records and I used its public key to decrypt the nonsense.  The nonsense
+         matches so you must be who you say you are.  I'll allow access to that resource. I would like to suggest
+         that you let me know who you are when making future requests so I'll grant you direct access."
+
+    HTTP/1.1 200 OK
+    Content-Type: text/html
+    Content-Length: 7984
+
+[client] "Thanks, I'll do that."
+
+    GET /something-else.pdf HTTP/1.1
+    Host: somesite.com
+    Authorization: SQRL username="beef012395678",  realm="sqrl.somesite.com"
+
+[server] "See, that wasn't so hard was it?"
+
+    HTTP/1.1 200 OK
+    Content-Type: application/pdf
+    Content-Length: 101019
+
+The steps go something like this:
 
 * client accesses a SQRL enabled site
 * server looks for the Authorization header, does not find it and issues a 401 Unauthorized response, filling in 
