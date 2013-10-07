@@ -18,6 +18,12 @@ import org.springframework.web.util.UriComponentsBuilder
 @Controller
 class SqrlController {
 
+    @RequestMapping( value = '/new-identity', method = RequestMethod.GET )
+    ResponseEntity<String>  ted( @RequestHeader( value = 'Authorization', required = false ) String authenticationString,
+                                 @RequestHeader( value = 'WWW-Authenticate', required = false ) String challengeString) {
+        log.info( 'New SQRL identity requested.' )
+    }
+
     @RequestMapping( value = '/index.html', method = RequestMethod.GET )
     ResponseEntity<String>  bob( @RequestHeader( value = 'Authorization', required = false ) String authenticationString ) {
         log.info( 'Authorization header = {}', authenticationString )
