@@ -9,7 +9,7 @@ of the solution and take it closer to what is done with current HTTP authenticat
 a returning client that has already established an identity with a server and a client that needs to establish a new 
 identity with the server.  Let's take the easy one first, established identity.
 
-<strong>clientL</strong> "Hello, I would like access to this resource."
+<strong>client:</strong> "Hello, I would like access to this resource."
         
     GET /index.html HTTP/1.1
     Host: somesite.com
