@@ -121,4 +121,7 @@ the realm remains constant, you could move the entire site to another domain and
 
 Another deviation is in the use of the HMAC.  Steve appears to want to use the HMAC as a source of randomness when 
 generating the key pair.  I haven't been able to figure out how to do that with the Java APIs so my compromise is
-to use the HMAC as the identifier instead of the public key.
+to use the HMAC as the identifier instead of the public key. UPDATE: in the latest podcast Steve implies that he
+regenerates the key pair for each new authentication session and doesn't keep them around.  That is why the keys 
+need to be tied to the HMAC -- so they always come out the same.  Nice idea but I'm not sure the Java Crypto APIs
+will allow me to do this.
