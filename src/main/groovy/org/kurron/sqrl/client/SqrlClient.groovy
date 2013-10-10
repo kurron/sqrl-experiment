@@ -106,7 +106,7 @@ class SqrlClient  implements ResponseErrorHandler {
      * @return the client's secret key.
      */
     private static SecretKeySpec loadSecretKey() {
-        byte[] secretBytes = new byte[256]
+        byte[] secretBytes = new byte[32]
         generator.nextBytes(secretBytes)
         SecretKeySpec secretKey = new SecretKeySpec(secretBytes, 'AES')
         secretKey
